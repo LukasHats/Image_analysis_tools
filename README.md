@@ -11,3 +11,4 @@ A small tool to extract correctly named single-channel .tiff files from Steinboc
 | `-i`, `--input`  | Path to the input directory, where multichannel .tiffs are located           | No      |
 | `-o`, `--output` | Path to the output directory where the output single-channel .tiffs will be stored      | No      |
 | `-p`, `--panel` | Exact path to the panel file   | No       |
+| `-c`, `--channels` | "Comma-separated list of channel indices to extract (e.g., '0,1,2')"  | No       |
