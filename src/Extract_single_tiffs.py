@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", type=str, help="Path to the input directory, where multichannel .tiffs are located")
 parser.add_argument("-o", "--output", type=str, help="Path to the output directory where the output single-channel .tiffs will be stored")
 parser.add_argument("-p", "--panel", type=str, help="Path to the panel file")
+parser.add_argument("-c", "--channels", type=str, help="Comma-separated list of channel indices to extract (e.g., '0,1,2')")
 args = parser.parse_args()
 
 def read_panel_file(panel_path):
@@ -15,13 +16,13 @@ def read_panel_file(panel_path):
     with open(panel_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            # Combine the channel and name columns for the filename
             channel_name = f"{row['channel']}_{row['name']}".strip("_")
             channel_info.append(channel_name)
     return channel_info
 
-def extract_and_organize_channels(input_dir, output_dir, panel_path):
+def extract_and_organize_channels(input_dir, output_dir, panel_path, channels):
     channel_info = read_panel_file(panel_path)
+    selected_channels = [int(ch.strip()) for ch in channels.split(',')] if channels else range(len(channel_info))
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -34,9 +35,8 @@ def extract_and_organize_channels(input_dir, output_dir, panel_path):
 
             try:
                 img = tiff.imread(file_path)
-                for channel in range(img.shape[0]):
+                for channel in selected_channels:
                     channel_img = img[channel, :, :]
-                    # Use the combined channel and name for the file name
                     channel_label = channel_info[channel] if channel < len(channel_info) else f"Channel{channel+1}"
                     channel_file_name = f"{channel_label}.tiff"
                     channel_file_path = file_output_path / channel_file_name
@@ -45,4 +45,4 @@ def extract_and_organize_channels(input_dir, output_dir, panel_path):
                 print(f"Error processing {file_path}: {e}")
 
 if __name__ == "__main__":
-    extract_and_organize_channels(args.input, args.output, args.panel)
+    extract_and_organize_channels(args.input, args.output, args.panel, args.channels)
