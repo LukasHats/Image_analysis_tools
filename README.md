@@ -14,7 +14,7 @@ A small tool to extract correctly named single-channel .tiff files from Steinboc
 | `-c`, `--channels` | "Comma-separated list of channel indices to extract (e.g., '0,1,2')"  | No       |
 
 #### extract_single_tiff_ome.py
-A small tool to extract correctly named single-channel .tiff files from Steinbock generated multichannel .tiffs. A Steinbock [Panel_file](https://bodenmillergroup.github.io/steinbock/latest/cli/preprocessing/) needs to be created before.
+A small tool to extract correctly named single-channel .tiff files from Steinbock generated multichannel ome.tiffs. This approach does not need a panel file.
 
 | Option          | Description                               | Optional |
 |-----------------|-------------------------------------------|----------|
