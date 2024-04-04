@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", type=str, help="Path to the input directory, where multichannel .tiffs are located")
 parser.add_argument("-o", "--output", type=str, help="Path to the output directory where the output single-channel .tiffs will be stored")
 parser.add_argument("-p", "--panel", type=str, help="Path to the panel file")
-parser.add_argument("-c", "--channels", type=str, help="Comma-separated list of channel indices to extract (e.g., '0,1,2')")
+parser.add_argument("-c", "--channels", type=str, default=None, help="Comma-separated list of channel indices to extract (e.g., '0,1,2'). If not provided, all channels will be extracted.")
 args = parser.parse_args()
 
 def read_panel_file(panel_path):
@@ -22,7 +22,6 @@ def read_panel_file(panel_path):
 
 def extract_and_organize_channels(input_dir, output_dir, panel_path, channels):
     channel_info = read_panel_file(panel_path)
-    selected_channels = [int(ch.strip()) for ch in channels.split(',')] if channels else range(len(channel_info))
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -35,6 +34,12 @@ def extract_and_organize_channels(input_dir, output_dir, panel_path, channels):
 
             try:
                 img = tiff.imread(file_path)
+                if channels:
+                    selected_channels = [int(ch.strip()) for ch in channels.split(',')]
+                else:
+                    # If channels are not specified, extract all channels
+                    selected_channels = range(img.shape[0])
+
                 for channel in selected_channels:
                     channel_img = img[channel, :, :]
                     channel_label = channel_info[channel] if channel < len(channel_info) else f"Channel{channel+1}"
